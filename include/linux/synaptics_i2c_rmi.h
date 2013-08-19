@@ -169,9 +169,13 @@ enum {
 	INTR_SOURCE,
 	FUNCTION
 };
+<<<<<<< HEAD
 
 extern uint8_t touchscreen_is_on(void);
 
+=======
+extern uint8_t touchscreen_is_on(void); 
+>>>>>>> 6d1880f... input/ synaptics_3200 Add: hooks for BB mod by tbalden
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
 /* Sweep2Wake */
 extern void sweep2wake_setdev(struct input_dev * input_device);

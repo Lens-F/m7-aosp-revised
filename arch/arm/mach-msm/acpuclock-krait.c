@@ -33,7 +33,6 @@
 #include <mach/rpm-regulator.h>
 #include <mach/rpm-regulator-smd.h>
 #include <mach/msm_bus.h>
-#include <mach/msm_dcvs.h>
 
 #include "acpuclock.h"
 #include "acpuclock-krait.h"
@@ -1190,7 +1189,6 @@ int __init acpuclk_krait_init(struct device *dev,
 	hw_init();
 
 	cpufreq_table_init();
-	dcvs_freq_init();
 	acpuclk_register(&acpuclk_krait_data);
 	register_hotcpu_notifier(&acpuclk_cpu_notifier);
 

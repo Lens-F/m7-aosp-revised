@@ -170,5 +170,9 @@ enum {
 	FUNCTION
 };
 
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
+extern void sweep2wake_setdev(struct input_dev * input_device);
+#endif
+
 extern uint8_t getPowerKeyState(void);
 #endif 

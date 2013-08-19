@@ -2408,7 +2408,7 @@ __acquires(&gcwq->lock)
 	}
 }
 
-static int workqueue_cpu_callback(struct notifier_block *nfb,
+static int __devinit workqueue_cpu_callback(struct notifier_block *nfb,
 						unsigned long action,
 						void *hcpu)
 {
@@ -2503,7 +2503,7 @@ err_destroy:
 	return NOTIFY_BAD;
 }
 
-static int workqueue_cpu_up_callback(struct notifier_block *nfb,
+static int __devinit workqueue_cpu_up_callback(struct notifier_block *nfb,
 					       unsigned long action,
 					       void *hcpu)
 {
@@ -2517,7 +2517,7 @@ static int workqueue_cpu_up_callback(struct notifier_block *nfb,
 	return NOTIFY_OK;
 }
 
-static int workqueue_cpu_down_callback(struct notifier_block *nfb,
+static int __devinit workqueue_cpu_down_callback(struct notifier_block *nfb,
 						 unsigned long action,
 						 void *hcpu)
 {

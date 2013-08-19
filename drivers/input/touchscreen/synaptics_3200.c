@@ -154,104 +154,6 @@ static int synaptics_init_panel(struct synaptics_ts_data *ts);
 static irqreturn_t synaptics_irq_thread(int irq, void *ptr);
 
 extern unsigned int get_tamper_sf(void);
-<<<<<<< HEAD
-=======
-
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-int s2w_switch = 1;
-int l2m_switch = 1;
-int s2w_wakestat = 0;
-bool scr_suspended = false;
-int s2w_hist[2] = {0, 0};
-cputime64_t s2w_time[2] = {0, 0};
-int l2m_hist[2] = {0, 0};
-cputime64_t l2m_time[2] = {0, 0};
-int home_suppress = 0;
-int back_suppress = 0;
-#define S2W_TIMEOUT 350
-#define L2M_TIMEOUT 300
-static struct input_dev * sweep2wake_pwrdev;
-static DEFINE_MUTEX(pwrkeyworklock);
-
-extern void sweep2wake_setdev(struct input_dev * input_device) {
-	sweep2wake_pwrdev = input_device;
-	return;
-}
-EXPORT_SYMBOL(sweep2wake_setdev);
-
-static void sweep2wake_presspwr(struct work_struct * sweep2wake_presspwr_work) {
-	if (!mutex_trylock(&pwrkeyworklock))
-                return;
-	input_event(sweep2wake_pwrdev, EV_KEY, KEY_POWER, 1);
-	input_event(sweep2wake_pwrdev, EV_SYN, 0, 0);
-	msleep(100);
-	input_event(sweep2wake_pwrdev, EV_KEY, KEY_POWER, 0);
-	input_event(sweep2wake_pwrdev, EV_SYN, 0, 0);
-	msleep(100);
-        mutex_unlock(&pwrkeyworklock);
-	return;
-}
-static DECLARE_WORK(sweep2wake_presspwr_work, sweep2wake_presspwr);
-
-void sweep2wake_pwrtrigger(void) {
-	schedule_work(&sweep2wake_presspwr_work);
-        return;
-}
-
-static void sweep2wake_pressmenu(struct work_struct * sweep2wake_pressmenu_work) {
-  struct synaptics_ts_data *ts = gl_ts;
-        printk("sending event KEY_MENU 1\n");
-        input_event(ts->input_dev, EV_KEY, KEY_MENU, 1);
-        input_sync(ts->input_dev);
-        msleep(100);
-        input_event(ts->input_dev, EV_KEY, KEY_MENU, 0);
-        input_sync(ts->input_dev);
-        msleep(100);
-        return;
-}
-
-static DECLARE_WORK(sweep2wake_pressmenu_work, sweep2wake_pressmenu); 
-
-void sweep2wake_menutrigger(void) {
-                schedule_work(&sweep2wake_pressmenu_work);
-        return;
-} 
-
-static int __init get_s2w_opt(char *s2w)
-{
-	if (strcmp(s2w, "0") == 0) {
-		s2w_switch = 0;
-	} else if (strcmp(s2w, "1") == 0) {
-		s2w_switch = 1;
-	} else if (strcmp(s2w, "2") == 0) {
-		s2w_switch = 2;
-	} else if (strcmp(s2w, "3") == 0) {
-		s2w_switch = 3;
-	} else {
-		s2w_switch = 0;
-	}
-	return 1;
-}
-
-__setup("s2w=", get_s2w_opt); 
-
-
-static int __init get_l2m_opt(char *l2m)
-{
-	if (strcmp(l2m, "0") == 0) {
-		l2m_switch = 0;
-	} else if (strcmp(l2m, "1") == 0) {
-		l2m_switch = 1;
-	} else {
-		l2m_switch = 0;
-	}
-	return 1;
-}
-
-__setup("l2m=", get_l2m_opt); 
-
-#endif
->>>>>>> parent of 6e4f106... added BB Mod by tbalden
 
 static void syn_page_select(struct i2c_client *client, uint8_t page)
 {
@@ -1779,55 +1681,6 @@ static DEVICE_ATTR(reset, (S_IWUSR),
 
 #endif
 
-<<<<<<< HEAD
-=======
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-static ssize_t synaptics_sweep2wake_show(struct device *dev,
-		struct device_attribute *attr, char *buf)
-{
-	size_t count = 0;
-
-	count += sprintf(buf, "%d\n", s2w_switch);
-
-	return count;
-}
-
-static ssize_t synaptics_sweep2wake_dump(struct device *dev,
-		struct device_attribute *attr, const char *buf, size_t count)
-{
-	if (buf[0] >= '0' && buf[0] <= '3' && buf[1] == '\n')
-                if (s2w_switch != buf[0] - '0')
-		        s2w_switch = buf[0] - '0';
-
-	return count;
-}
-
-static DEVICE_ATTR(sweep2wake, 0666,
-	synaptics_sweep2wake_show, synaptics_sweep2wake_dump);
-
-static ssize_t synaptics_logo2menu_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	size_t count = 0;
-	count += sprintf(buf, "%d\n", l2m_switch);
-
-	return count;
-}
-
-static ssize_t synaptics_logo2menu_dump(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
-{
-	if (buf[0] >= '0' && buf[0] <= '1' && buf[1] == '\n')
-	if (l2m_switch != buf[0] - '0') {
-		l2m_switch = buf[0] - '0';
-	}
-	return count;
-}
-
-static DEVICE_ATTR(logo2menu, (S_IWUSR|S_IRUGO),
-	synaptics_logo2menu_show, synaptics_logo2menu_dump); 
-
-#endif
-
->>>>>>> parent of 6e4f106... added BB Mod by tbalden
 enum SR_REG_STATE{
 	ALLOCATE_DEV_FAIL = -2,
 	REGISTER_DEV_FAIL,
@@ -2107,82 +1960,6 @@ static int synaptics_init_panel(struct synaptics_ts_data *ts)
 	return ret;
 }
 
-<<<<<<< HEAD
-=======
-
-static void sweep2wake_func(int button_id, cputime64_t strigger_time) {
-
-        s2w_time[1] = s2w_time[0];
-        s2w_time[0] = strigger_time;
-
-        s2w_hist[1] = s2w_hist[0];
-        s2w_hist[0] = button_id;
-
-//	printk(KERN_INFO "button id 1=%i, button id 2= %i\n", s2w_hist[0], s2w_hist[1]);
-
-        if (scr_suspended) {
-
-		if ((s2w_hist[1] == 1 && s2w_hist[0] == 2) && ((s2w_time[0]-s2w_time[1]) < S2W_TIMEOUT)) {
-                        printk(KERN_INFO"[S2W]: OFF->ON\n");
-
-                        sweep2wake_pwrtrigger();
-		}
-
-        } else if (!scr_suspended) {
-
-		if ((s2w_hist[1] == 2 && s2w_hist[0] == 1) && ((s2w_time[0]-s2w_time[1]) < S2W_TIMEOUT)) {
-                        printk(KERN_INFO"[S2W]: ON->OFF\n");
-                        sweep2wake_pwrtrigger();
-		}
-	}
-
-
-        return;
-}
-
-static void logo2wake_func(void) {
-
-//	printk(KERN_INFO "button id 1=%i, button id 2= %i\n", l2m_hist[0], l2m_hist[1]);
-
-	if (l2m_switch == 1 && scr_suspended == false && ((l2m_time[0]-l2m_time[1]) < L2M_TIMEOUT)) {     
-		printk(KERN_INFO"[L2M]: menu button activated\n");
-		sweep2wake_menutrigger();  
-	}
-
-	if (s2w_switch == 3 && ((l2m_time[0]-l2m_time[1]) > L2M_TIMEOUT)) {
-		printk(KERN_INFO"[L2M]: power button activated\n");
-		vibrate(20);
-		sweep2wake_pwrtrigger();
-	}
-
-        return;
-}
-
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-static int last_touch_position_x = 0;
-static int last_touch_position_y = 0;
-
-static int report_htc_logo_area(int x, int y)
-{
-        cputime64_t ltrigger_time;
-
-	if (l2m_switch == 0 && s2w_switch < 3)
-		return 0;
-
-	if (last_touch_position_x > 620 && last_touch_position_x < 1150) {
-		if (last_touch_position_y > 2835 || (scr_suspended == true && last_touch_position_y > 2750)) {
-			ltrigger_time = ktime_to_ms(ktime_get());
-			l2m_time[1] = l2m_time[0];
-			l2m_time[0] = ltrigger_time;
-			printk("[L2M]: HTC button pressed\n");
-			return 1;
-		}
- 	}
-	return 0;
-}
-#endif 
-
->>>>>>> parent of 6e4f106... added BB Mod by tbalden
 static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 {
 	int ret;
@@ -3627,27 +3404,6 @@ static int synaptics_ts_suspend(struct i2c_client *client, pm_message_t mesg)
 	int ret = 0;
 	uint8_t data = 0, update = 0;
 	struct synaptics_ts_data *ts = i2c_get_clientdata(client);
-<<<<<<< HEAD
-=======
-
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-	scr_suspended = true;
-	if (s2w_switch > 0) {
-		//screen off, enable_irq_wake
-	/*	scr_suspended = true;
-		enable_irq_wake(client->irq);  */
-		if (s2w_switch == 1 || s2w_switch == 3) {
-		  enable_irq_wake(client->irq);
-		  s2w_wakestat = 1;
-		} else {
-		  s2w_wakestat = 0;
-		}
-	} else {
-		s2w_wakestat = 0;
-	}
-#endif
-
->>>>>>> parent of 6e4f106... added BB Mod by tbalden
 	printk(KERN_INFO "[TP] %s: enter\n", __func__);
 
 	if (ts->use_irq) {
@@ -3856,17 +3612,6 @@ static int synaptics_ts_resume(struct i2c_client *client)
 {
 	int ret;
 	struct synaptics_ts_data *ts = i2c_get_clientdata(client);
-<<<<<<< HEAD
-=======
-
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE  
-                //screen on, disable_irq_wake
-                scr_suspended = false;
-	if (s2w_wakestat == 1) 
-		disable_irq_wake(client->irq);
-#endif
-
->>>>>>> parent of 6e4f106... added BB Mod by tbalden
 	printk(KERN_INFO "[TP] %s: enter\n", __func__);
 
 	if (ts->power) {

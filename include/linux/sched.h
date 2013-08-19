@@ -97,11 +97,11 @@ extern unsigned long avenrun[];
 extern void get_avenrun(unsigned long *loads, unsigned long offset, int shift);
 
 #define FSHIFT		11		
-#define FIXED_1		(1<<FSHIFT)	
-#define LOAD_FREQ	(5*HZ+1)	
-#define EXP_1		1884		
-#define EXP_5		2014		
-#define EXP_15		2037		
+#define FIXED_1    	(1UL<<FSHIFT) 	
+#define LOAD_FREQ	(4*HZ+61)	
+#define EXP_1		1896		
+#define EXP_5		2017		
+#define EXP_15		2038		
 
 #define CALC_LOAD(load,exp,n) \
 	load *= exp; \
@@ -121,6 +121,7 @@ extern unsigned long this_cpu_load(void);
 extern void sched_get_nr_running_avg(int *avg, int *iowait_avg);
 
 extern void calc_global_load(unsigned long ticks);
+extern void update_cpu_load_nohz(void);
 
 extern unsigned long get_parent_ip(unsigned long addr);
 
@@ -739,6 +740,7 @@ struct sched_domain {
 	unsigned int smt_gain;
 	int flags;			
 	int level;
+	int idle_buddy;      /* cpu assigned to select_idle_sibling() */ 
 
 	
 	unsigned long last_balance;	

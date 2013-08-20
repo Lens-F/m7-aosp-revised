@@ -35,7 +35,6 @@
 	} while (0)
 
 static bool flag_enable_bms_chg_log;
-#define BATT_LOG_BUF_LEN (256)
 
 #define CCADC_ANA_PARAM		0x240
 #define CCADC_DIG_PARAM		0x241
@@ -89,7 +88,6 @@ struct pm8xxx_ccadc_chip {
 };
 
 static struct pm8xxx_ccadc_chip *the_chip;
-static char batt_log_buf[BATT_LOG_BUF_LEN];
 
 #ifdef DEBUG
 static s64 microvolt_to_ccadc_reading(struct pm8xxx_ccadc_chip *chip, s64 cc)
@@ -600,7 +598,7 @@ DEFINE_SIMPLE_ATTRIBUTE(reg_fops, get_reg, set_reg, "0x%02llx\n");
 
 static int get_calc(void *data, u64 * val)
 {
-	int ibat = 0, rc;
+	int ibat =0, rc; 
 
 	rc = pm8xxx_ccadc_get_battery_current(&ibat);
 	*val = ibat;
@@ -610,35 +608,25 @@ DEFINE_SIMPLE_ATTRIBUTE(calc_fops, get_calc, NULL, "%lld\n");
 
 void dump_all(void)
 {
-	u64 val;
-	unsigned int len =0;
-
-	memset(batt_log_buf, 0, sizeof(BATT_LOG_BUF_LEN));
-
+	u64 val = 0;
 	get_reg((void *)CCADC_ANA_PARAM, &val);
-	len += scnprintf(batt_log_buf + len, BATT_LOG_BUF_LEN - len, "ANA_PARAM=0x%02llx,", val);
+	pr_info("CCADC_ANA_PARAM = 0x%02llx\n", val);
 	get_reg((void *)CCADC_DIG_PARAM, &val);
-	len += scnprintf(batt_log_buf + len, BATT_LOG_BUF_LEN - len, "DIG_PARAM=0x%02llx,", val);
+	pr_info("CCADC_DIG_PARAM = 0x%02llx\n", val);
 	get_reg((void *)CCADC_RSV, &val);
-	len += scnprintf(batt_log_buf + len, BATT_LOG_BUF_LEN - len, "RSV=0x%02llx,", val);
+	pr_info("CCADC_RSV = 0x%02llx\n", val);
 	get_reg((void *)CCADC_DATA0, &val);
-	len += scnprintf(batt_log_buf + len, BATT_LOG_BUF_LEN - len, "DATA0=0x%02llx,", val);
+	pr_info("CCADC_DATA0 = 0x%02llx\n", val);
 	get_reg((void *)CCADC_DATA1, &val);
-	len += scnprintf(batt_log_buf + len, BATT_LOG_BUF_LEN - len, "DATA1=0x%02llx,", val);
+	pr_info("CCADC_DATA1 = 0x%02llx\n", val);
 	get_reg((void *)CCADC_OFFSET_TRIM1, &val);
-	len += scnprintf(batt_log_buf + len, BATT_LOG_BUF_LEN - len, "OFFSET_TRIM1=0x%02llx,", val);
+	pr_info("CCADC_OFFSET_TRIM1 = 0x%02llx\n", val);
 	get_reg((void *)CCADC_OFFSET_TRIM0, &val);
-	len += scnprintf(batt_log_buf + len, BATT_LOG_BUF_LEN - len, "OFFSET_TRIM0=0x%02llx,", val);
+	pr_info("CCADC_OFFSET_TRIM0 = 0x%02llx\n", val);
 	get_reg((void *)CCADC_FULLSCALE_TRIM1, &val);
-	len += scnprintf(batt_log_buf + len, BATT_LOG_BUF_LEN - len, "FULLSCALE_TRIM1=0x%02llx,", val);
+	pr_info("CCADC_FULLSCALE_TRIM1 = 0x%02llx\n", val);
 	get_reg((void *)CCADC_FULLSCALE_TRIM0, &val);
-	len += scnprintf(batt_log_buf + len, BATT_LOG_BUF_LEN - len, "FULLSCALE_TRIM0=0x%02llx", val);
-
-	
-	if(BATT_LOG_BUF_LEN - len <= 1)
-		pr_info("batt log length maybe out of buffer range!!!");
-
-	pr_info("%s\n", batt_log_buf);
+	pr_info("CCADC_FULLSCALE_TRIM0 = 0x%02llx\n", val);
 }
 
 inline int pm8xxx_ccadc_dump_all(void)
@@ -817,3 +805,4 @@ MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("PMIC8XXX ccadc driver");
 MODULE_VERSION("1.0");
 MODULE_ALIAS("platform:" PM8XXX_CCADC_DEV_NAME);
+

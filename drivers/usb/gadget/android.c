@@ -473,8 +473,7 @@ static void rmnet_function_cleanup(struct android_usb_function *f)
 static int rmnet_function_bind_config(struct android_usb_function *f,
 					 struct usb_configuration *c)
 {
-	int i;
-	int err = 0;
+	int i, err = 0;
 	char *ctrl_name;
 	char *data_name;
 	char buf[MAX_XPORT_STR_LEN], *b;
@@ -1905,3 +1904,4 @@ static void __exit cleanup(void)
 	_android_dev = NULL;
 }
 module_exit(cleanup);
+

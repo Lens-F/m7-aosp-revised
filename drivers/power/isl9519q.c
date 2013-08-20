@@ -558,7 +558,7 @@ static int get_reg(void *data, u64 *val)
 {
 	int addr = (int)data;
 	int ret;
-	u16 temp;
+	u16 temp = 0;
 
 	ret = isl9519q_read_reg(the_isl_chg->client, addr, &temp);
 	if (ret) {
@@ -812,3 +812,4 @@ module_exit(isl9519q_exit);
 MODULE_AUTHOR("Abhijeet Dharmapurikar <adharmap@codeaurora.org>");
 MODULE_DESCRIPTION("Driver for ISL9519Q Charger chip");
 MODULE_LICENSE("GPL v2");
+

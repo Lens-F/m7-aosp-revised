@@ -929,7 +929,6 @@ static struct htc_battery_platform_data htc_battery_pdev_data = {
 	.icharger.name = "pm8921",
 	.icharger.set_limit_charge_enable = pm8921_limit_charge_enable,
 	.icharger.get_attr_text = pm8921_charger_get_attr_text,
-	.icharger.max_input_current = pm8921_set_hsml_target_ma,
 	.icharger.enable_5v_output = NULL,
 	.icharger.get_charging_source = pm8921_get_charging_source,
 	.icharger.get_charging_enabled = pm8921_get_charging_enabled,
@@ -944,7 +943,6 @@ static struct htc_battery_platform_data htc_battery_pdev_data = {
 						cable_detect_register_notifier,
 	.icharger.dump_all = pm8921_dump_all,
 	.icharger.is_safty_timer_timeout = pm8921_is_chg_safety_timer_timeout,
-	.icharger.is_battery_full_eoc_stop = pm8921_is_batt_full_eoc_stop,
 
 
 	.igauge.name = "pm8921",
